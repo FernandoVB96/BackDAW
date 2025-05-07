@@ -21,12 +21,13 @@ public class AuthController {
 
     @PostMapping("/registro")
     public ResponseEntity<AuthResponse> registrar(@RequestBody RegistroRequest request) {
-        return ResponseEntity.ok(authService.registrar(request));
+        AuthResponse response = authService.registrar(request);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(authService.login(request));
+        AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 }
-

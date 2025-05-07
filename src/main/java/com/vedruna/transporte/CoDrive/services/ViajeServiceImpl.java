@@ -3,6 +3,9 @@ package com.vedruna.transporte.CoDrive.services;
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
 import com.vedruna.transporte.CoDrive.persistance.repository.ViajeRepository;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import com.vedruna.transporte.CoDrive.persistance.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +16,16 @@ import java.util.List;
 public class ViajeServiceImpl implements ViajeServiceI {
 
     private final ViajeRepository viajeRepository;
+    private final UsuarioRepository usuarioRepository; 
 
     // Crear viaje (sin cambios)
     @Override
     public Viaje crearViaje(Viaje viaje) {
+        Usuario conductor = obtenerUsuarioLogueado();
+        viaje.setConductor(conductor);
         return viajeRepository.save(viaje);
     }
+    
 
     // Buscar viajes por destino (sin cambios)
     @Override
@@ -54,9 +61,9 @@ public class ViajeServiceImpl implements ViajeServiceI {
 
     // Método ficticio para obtener el usuario logueado
     private Usuario obtenerUsuarioLogueado() {
-        // Aquí deberías obtener al usuario logueado usando tu lógica de autenticación
-        // Por ejemplo, si usas Spring Security, puedes usar algo como:
-        // return (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new Usuario(); // Esto es solo un placeholder
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
+    
 }
