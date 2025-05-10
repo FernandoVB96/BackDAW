@@ -1,22 +1,35 @@
 package com.vedruna.transporte.CoDrive.services;
 
+import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
 import java.util.List;
 
 public interface ViajeServiceI {
 
-    // Método para crear un viaje
+    // Crear un viaje
     Viaje crearViaje(Viaje viaje);
 
-    // Método para buscar viajes por destino
+    // Buscar viajes por destino
     List<Viaje> buscarPorDestino(String destino);
 
-    // Método para buscar viajes por origen y destino
+    // Buscar viajes por origen y destino
     List<Viaje> buscarPorOrigenYDestino(String origen, String destino);
 
-    // Método para obtener los viajes con plazas disponibles
+    // Buscar viajes con plazas disponibles
     List<Viaje> buscarPorPlazasDisponibles();
 
-    // Método para obtener los viajes del usuario logueado (como conductor o pasajero)
+    // Obtener los viajes del usuario logueado
     List<Viaje> buscarMisViajes();
+
+    // Cancelar un viaje (solo si es el conductor)
+    void cancelarViaje(Long viajeId);
+
+    // Unirse a un viaje como pasajero
+    Viaje unirseAViaje(Long viajeId);
+
+    // Abandonar un viaje (cancelar participación)
+    Viaje abandonarViaje(Long viajeId);
+
+    // Obtener los pasajeros de un viaje
+    List<Usuario> obtenerPasajerosDeViaje(Long viajeId);
 }

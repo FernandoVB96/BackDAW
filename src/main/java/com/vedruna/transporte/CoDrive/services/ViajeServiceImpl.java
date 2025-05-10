@@ -65,5 +65,53 @@ public class ViajeServiceImpl implements ViajeServiceI {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
     }
+
+    public void cancelarViaje(Long viajeId) {
+        Usuario conductor = obtenerUsuarioLogueado();
+        Viaje viaje = viajeRepository.findById(viajeId)
+            .orElseThrow(() -> new IllegalArgumentException("Viaje no encontrado"));
+        
+        if (!viaje.getConductor().getId().equals(conductor.getId())) {
+            throw new SecurityException("No tienes permiso para cancelar este viaje");
+        }
+    
+        viajeRepository.delete(viaje);
+    }
+
+    public Viaje unirseAViaje(Long viajeId) {
+        Usuario usuario = obtenerUsuarioLogueado();
+        Viaje viaje = viajeRepository.findById(viajeId)
+            .orElseThrow(() -> new IllegalArgumentException("Viaje no encontrado"));
+    
+        if (viaje.getPlazasDisponibles() <= 0) {
+            throw new IllegalStateException("No hay plazas disponibles");
+        }
+    
+        viaje.getPasajeros().add(usuario);
+        viaje.setPlazasDisponibles(viaje.getPlazasDisponibles() - 1);
+        return viajeRepository.save(viaje);
+    }
+    
+    public Viaje abandonarViaje(Long viajeId) {
+        Usuario usuario = obtenerUsuarioLogueado();
+        Viaje viaje = viajeRepository.findById(viajeId)
+            .orElseThrow(() -> new IllegalArgumentException("Viaje no encontrado"));
+    
+        if (!viaje.getPasajeros().contains(usuario)) {
+            throw new IllegalStateException("No estás en este viaje");
+        }
+    
+        viaje.getPasajeros().remove(usuario);
+        viaje.setPlazasDisponibles(viaje.getPlazasDisponibles() + 1);
+        return viajeRepository.save(viaje);
+    }
+    
+    public List<Usuario> obtenerPasajerosDeViaje(Long viajeId) {
+        Viaje viaje = viajeRepository.findById(viajeId)
+            .orElseThrow(() -> new IllegalArgumentException("Viaje no encontrado"));
+        return viaje.getPasajeros();
+    }
+    
+    
     
 }

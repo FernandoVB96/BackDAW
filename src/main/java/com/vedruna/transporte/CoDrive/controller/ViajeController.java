@@ -4,11 +4,12 @@ import com.vedruna.transporte.CoDrive.dto.CrearViajeRequest;
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.services.ViajeServiceI;
-import com.vedruna.transporte.CoDrive.exceptions.NoEsConductorException; // Importamos la excepción personalizada
+import com.vedruna.transporte.CoDrive.exceptions.NoEsConductorException;
+
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,18 +21,15 @@ public class ViajeController {
 
     private final ViajeServiceI viajeService;
 
-    // Método para crear un nuevo viaje
+    // Crear nuevo viaje
     @PostMapping
     public ResponseEntity<Viaje> crearViaje(@RequestBody CrearViajeRequest request) {
-        // Obtener el usuario autenticado
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        // Verificar si el usuario tiene el rol "CONDUCTOR"
         if (!userDetails.getAuthorities().toString().contains("ROLE_CONDUCTOR")) {
-            throw new NoEsConductorException("Solo los conductores pueden crear viajes"); // Lanzar la excepción personalizada
+            throw new NoEsConductorException("Solo los conductores pueden crear viajes");
         }
 
-        // Crear el nuevo viaje
         Viaje viaje = new Viaje();
         viaje.setOrigen(request.getOrigen());
         viaje.setDestino(request.getDestino());
@@ -40,27 +38,47 @@ public class ViajeController {
         viaje.setPlazasTotales(request.getPlazasTotales());
         viaje.setPlazasDisponibles(request.getPlazasTotales());
 
-        // Asignar al conductor (usuario logueado) al viaje
         Usuario conductor = new Usuario();
-        conductor.setEmail(userDetails.getUsername()); // Asignar el email del conductor (usuario logueado)
+        conductor.setEmail(userDetails.getUsername());
         viaje.setConductor(conductor);
 
-        // Guardar el viaje en la base de datos
-        Viaje nuevoViaje = viajeService.crearViaje(viaje);
-        return ResponseEntity.ok(nuevoViaje);
+        return ResponseEntity.ok(viajeService.crearViaje(viaje));
     }
 
-    // Método para obtener los viajes disponibles
+    // Obtener viajes con plazas disponibles
     @GetMapping("/disponibles")
     public ResponseEntity<List<Viaje>> verDisponibles() {
-        List<Viaje> viajesDisponibles = viajeService.buscarPorPlazasDisponibles();
-        return ResponseEntity.ok(viajesDisponibles);
+        return ResponseEntity.ok(viajeService.buscarPorPlazasDisponibles());
     }
 
-    // Método para obtener los viajes del usuario logueado
+    // Obtener los viajes del usuario logueado
     @GetMapping("/mis-viajes")
     public ResponseEntity<List<Viaje>> verMisViajes() {
-        List<Viaje> misViajes = viajeService.buscarMisViajes();
-        return ResponseEntity.ok(misViajes);
+        return ResponseEntity.ok(viajeService.buscarMisViajes());
+    }
+
+    // 🚫 Cancelar un viaje (solo conductor)
+    @DeleteMapping("/{viajeId}")
+    public ResponseEntity<Void> cancelarViaje(@PathVariable Long viajeId) {
+        viajeService.cancelarViaje(viajeId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ✅ Unirse a un viaje como pasajero
+    @PostMapping("/{viajeId}/unirse")
+    public ResponseEntity<Viaje> unirseAViaje(@PathVariable Long viajeId) {
+        return ResponseEntity.ok(viajeService.unirseAViaje(viajeId));
+    }
+
+    // ↩️ Abandonar un viaje
+    @PostMapping("/{viajeId}/abandonar")
+    public ResponseEntity<Viaje> abandonarViaje(@PathVariable Long viajeId) {
+        return ResponseEntity.ok(viajeService.abandonarViaje(viajeId));
+    }
+
+    // 👥 Obtener pasajeros de un viaje
+    @GetMapping("/{viajeId}/pasajeros")
+    public ResponseEntity<List<Usuario>> obtenerPasajeros(@PathVariable Long viajeId) {
+        return ResponseEntity.ok(viajeService.obtenerPasajerosDeViaje(viajeId));
     }
 }

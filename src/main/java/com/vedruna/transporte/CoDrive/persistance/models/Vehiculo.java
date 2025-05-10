@@ -1,14 +1,14 @@
 package com.vedruna.transporte.CoDrive.persistance.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "vehiculos")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Vehiculo {
 
     @Id
@@ -20,8 +20,20 @@ public class Vehiculo {
     private String matricula;
     private int plazasDisponibles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conductor_id")
     private Conductor conductor;
-}
 
+    // Método para verificar si el vehículo está disponible
+    public boolean estaDisponible() {
+        return plazasDisponibles > 0;
+    }
+
+    // Método para actualizar la información del vehículo
+    public void actualizarInfo(String marca, String modelo, String matricula, int plazas) {
+        this.marca = marca;
+        this.modelo = modelo;
+        this.matricula = matricula;
+        this.plazasDisponibles = plazas;
+    }
+}

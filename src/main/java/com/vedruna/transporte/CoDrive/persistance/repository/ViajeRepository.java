@@ -13,6 +13,4 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
     List<Viaje> findByPlazasDisponiblesGreaterThan(int plazasDisponibles);
     List<Viaje> findByConductor(Usuario conductor);
     List<Viaje> findByPasajeros(Usuario usuario);
-
 }
-
