@@ -1,5 +1,6 @@
 package com.vedruna.transporte.CoDrive.services;
 
+import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Vehiculo;
 import com.vedruna.transporte.CoDrive.persistance.repository.VehiculoRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,6 @@ public class VehiculoServiceImpl implements VehiculoServiceI {
         Vehiculo vehiculo = obtenerVehiculo(id);
         vehiculoRepository.delete(vehiculo);
     }
-
     @Override
     public List<Vehiculo> obtenerVehiculosPorConductor(Long conductorId) {
         return vehiculoRepository.findByConductorId(conductorId);

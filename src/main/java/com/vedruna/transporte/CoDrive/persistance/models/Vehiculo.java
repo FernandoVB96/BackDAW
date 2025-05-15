@@ -1,5 +1,7 @@
 package com.vedruna.transporte.CoDrive.persistance.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +24,8 @@ public class Vehiculo {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conductor_id")
-    private Conductor conductor;
+    @JsonIgnore
+    private Usuario conductor;
 
     // Método para verificar si el vehículo está disponible
     public boolean estaDisponible() {

@@ -29,7 +29,9 @@ public class UsuarioServiceImpl implements UsuarioServiceI {
         Usuario usuario = obtenerMiPerfil();
         usuario.setNombre(datosActualizados.getNombre());
         usuario.setTelefono(datosActualizados.getTelefono());
-        // Puedes añadir más campos si deseas
+        usuario.setEmail(datosActualizados.getEmail());
+        usuario.setRol(datosActualizados.getRol());
+        usuario.setPassword(datosActualizados.getPassword());
         return usuarioRepository.save(usuario);
     }
 

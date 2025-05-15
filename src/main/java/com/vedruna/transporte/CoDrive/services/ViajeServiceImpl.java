@@ -25,6 +25,11 @@ public class ViajeServiceImpl implements ViajeServiceI {
         viaje.setConductor(conductor);
         return viajeRepository.save(viaje);
     }
+
+    @Override
+    public List<Viaje> obtenerViajesPorConductor(Long conductorId) {
+        return viajeRepository.findByConductorId(conductorId);
+    }
     
 
     // Buscar viajes por destino (sin cambios)

@@ -1,5 +1,6 @@
 package com.vedruna.transporte.CoDrive.services;
 
+import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Vehiculo;
 
 import java.util.List;

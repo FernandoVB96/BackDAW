@@ -27,7 +27,8 @@ public class Valoracion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conductor_id")
-    private Conductor conductor;
+    private Usuario conductor;
+
 
     // Método para validar si la valoración es válida
     public boolean esValida() {

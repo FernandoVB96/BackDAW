@@ -20,6 +20,8 @@ public interface ViajeServiceI {
 
     // Obtener los viajes del usuario logueado
     List<Viaje> buscarMisViajes();
+    
+    List<Viaje> obtenerViajesPorConductor(Long conductorId);
 
     // Cancelar un viaje (solo si es el conductor)
     void cancelarViaje(Long viajeId);
