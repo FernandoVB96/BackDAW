@@ -1,8 +1,16 @@
 package com.vedruna.transporte.CoDrive.services;
 
+import com.vedruna.transporte.CoDrive.dto.CrearValoracionDTO;
+import com.vedruna.transporte.CoDrive.dto.UsuarioDTO;
+import com.vedruna.transporte.CoDrive.dto.ValoracionResponseDTO;
+import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Valoracion;
+import com.vedruna.transporte.CoDrive.persistance.repository.UsuarioRepository;
 import com.vedruna.transporte.CoDrive.persistance.repository.ValoracionRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,12 +20,28 @@ import java.util.List;
 public class ValoracionServiceImpl implements ValoracionServiceI {
 
     private final ValoracionRepository valoracionRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
-    public Valoracion crearValoracion(Valoracion valoracion) {
+    public Valoracion crearValoracion(CrearValoracionDTO dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario autor = usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        Usuario conductor = usuarioRepository.findById(dto.getConductorId())
+                .orElseThrow(() -> new UsernameNotFoundException("Conductor no encontrado"));
+
+        Valoracion valoracion = new Valoracion();
+        valoracion.setPuntuacion(dto.getPuntuacion());
+        valoracion.setComentario(dto.getComentario());
+        valoracion.setFecha(dto.getFecha());
+        valoracion.setAutor(autor);
+        valoracion.setConductor(conductor);
+
         if (!valoracion.esValida()) {
             throw new IllegalArgumentException("La valoración no es válida");
         }
+
         return valoracionRepository.save(valoracion);
     }
 
