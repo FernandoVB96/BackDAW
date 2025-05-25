@@ -1,8 +1,11 @@
 package com.vedruna.transporte.CoDrive.persistance.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
@@ -14,4 +17,6 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
     List<Viaje> findByConductor(Usuario conductor);
     List<Viaje> findByPasajeros(Usuario usuario);
     List<Viaje> findByConductorId(Long conductorId);
+    @Query("SELECT v FROM Viaje v JOIN FETCH v.conductor WHERE v.id = :id")
+    Optional<Viaje> findByIdWithConductor(@Param("id") Long id);
 }

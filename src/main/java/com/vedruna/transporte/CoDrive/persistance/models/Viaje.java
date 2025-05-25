@@ -27,7 +27,7 @@ public class Viaje {
     private int plazasTotales;
     private int plazasDisponibles;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "conductor_id")
     private Usuario conductor;
 

@@ -1,5 +1,6 @@
 package com.vedruna.transporte.CoDrive.controller;
 
+import com.vedruna.transporte.CoDrive.dto.ActualizarUsuarioDTO;
 import com.vedruna.transporte.CoDrive.persistance.models.Rol;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Vehiculo;
@@ -33,7 +34,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/actualizar")
-    public ResponseEntity<Usuario> actualizarPerfil(@RequestBody Usuario datosActualizados) {
+    public ResponseEntity<Usuario> actualizarPerfil(@RequestBody ActualizarUsuarioDTO datosActualizados) {
         return ResponseEntity.ok(usuarioService.actualizarPerfil(datosActualizados));
     }
 
