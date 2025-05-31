@@ -47,8 +47,12 @@ public class ViajeController {
 
     // Obtener viajes con plazas disponibles
     @GetMapping("/disponibles")
-    public ResponseEntity<List<Viaje>> verDisponibles() {
-        return ResponseEntity.ok(viajeService.buscarPorPlazasDisponibles());
+    public ResponseEntity<List<Viaje>> verDisponibles(
+            @RequestParam(required = false) String origen,
+            @RequestParam(required = false) String destino,
+            @RequestParam(required = false) Integer plazasMin
+    ) {
+        return ResponseEntity.ok(viajeService.buscarPorFiltros(origen, destino, plazasMin));
     }
 
     // Obtener los viajes del usuario logueado

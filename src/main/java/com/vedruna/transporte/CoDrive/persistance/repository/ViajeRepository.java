@@ -19,4 +19,13 @@ public interface ViajeRepository extends JpaRepository<Viaje, Long> {
     List<Viaje> findByConductorId(Long conductorId);
     @Query("SELECT v FROM Viaje v JOIN FETCH v.conductor WHERE v.id = :id")
     Optional<Viaje> findByIdWithConductor(@Param("id") Long id);
+
+    @Query("SELECT v FROM Viaje v WHERE " +
+       "(:origen IS NULL OR v.origen = :origen) AND " +
+       "(:destino IS NULL OR v.destino = :destino) AND " +
+       "(:plazasMin IS NULL OR v.plazasDisponibles >= :plazasMin)")
+    List<Viaje> findByFiltros(@Param("origen") String origen, 
+                          @Param("destino") String destino, 
+                          @Param("plazasMin") Integer plazasMin);
+
 }
