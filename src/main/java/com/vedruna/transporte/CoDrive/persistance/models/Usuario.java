@@ -35,8 +35,10 @@ public class Usuario {
     @Email(message = "El email no tiene un formato válido")
     private String email;
 
-    @Pattern(regexp = "\\+?[0-9]{7,15}", message = "El teléfono debe contener solo números y opcionalmente el símbolo +")
+    @Size(min = 0, max = 15, message = "El teléfono debe tener máximo 15 caracteres")
+    @Pattern(regexp = "\\+?[0-9]*", message = "El teléfono debe contener solo números y opcionalmente el símbolo +")
     private String telefono;
+
 
     @JsonIgnore
     @NotBlank(message = "La contraseña no puede estar vacía")

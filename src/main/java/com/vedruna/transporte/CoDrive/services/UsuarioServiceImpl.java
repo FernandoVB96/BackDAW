@@ -31,13 +31,19 @@ public class UsuarioServiceImpl implements UsuarioServiceI {
     public Usuario actualizarPerfil(ActualizarUsuarioDTO datosActualizados) {
         Usuario usuario = obtenerMiPerfil();
 
+        System.out.println("Actualizando usuario con datos: " + datosActualizados);
+
         usuario.setNombre(datosActualizados.getNombre());
         usuario.setTelefono(datosActualizados.getTelefono());
         usuario.setEmail(datosActualizados.getEmail());
         usuario.setRol(datosActualizados.getRol());
 
-        if (datosActualizados.getPassword() != null && !datosActualizados.getPassword().isBlank()) {
-            usuario.setPassword(passwordEncoder.encode(datosActualizados.getPassword()));
+        String nuevaPassword = datosActualizados.getPassword();
+        if (nuevaPassword != null && !nuevaPassword.isBlank()) {
+            if (nuevaPassword.length() < 8) {
+                throw new IllegalArgumentException("La contraseña debe tener al menos 8 caracteres");
+            }
+            usuario.setPassword(passwordEncoder.encode(nuevaPassword));
         }
 
         return usuarioRepository.save(usuario);

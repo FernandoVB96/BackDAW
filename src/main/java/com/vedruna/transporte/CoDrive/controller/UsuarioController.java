@@ -19,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -39,10 +40,19 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obtenerMiPerfil());
     }
 
-    // Aquí decimos que valide el DTO con @Valid para que se active la validación de campos
     @PutMapping("/actualizar")
-    public ResponseEntity<Usuario> actualizarPerfil(@Valid @RequestBody ActualizarUsuarioDTO datosActualizados) {
-        return ResponseEntity.ok(usuarioService.actualizarPerfil(datosActualizados));
+    public ResponseEntity<?> actualizarPerfil(@Valid @RequestBody ActualizarUsuarioDTO datosActualizados) {
+        try {
+            Usuario usuarioActualizado = usuarioService.actualizarPerfil(datosActualizados);
+            return ResponseEntity.ok(usuarioActualizado);
+        } catch (IllegalArgumentException e) {
+            // Si tu servicio lanza IllegalArgumentException para errores de validación
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Error interno del servidor"));
+        }
     }
 
     @DeleteMapping("/eliminar")
