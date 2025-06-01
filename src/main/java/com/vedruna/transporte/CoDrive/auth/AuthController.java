@@ -10,6 +10,7 @@ import com.vedruna.transporte.CoDrive.dto.AuthResponse;
 import com.vedruna.transporte.CoDrive.dto.LoginRequest;
 import com.vedruna.transporte.CoDrive.dto.RegistroRequest;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/registro")
-    public ResponseEntity<AuthResponse> registrar(@RequestBody RegistroRequest request) {
+    public ResponseEntity<AuthResponse> registrar(@Valid @RequestBody RegistroRequest request) {
         AuthResponse response = authService.registrar(request);
         return ResponseEntity.ok(response);
     }

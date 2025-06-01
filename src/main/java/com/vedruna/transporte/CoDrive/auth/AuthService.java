@@ -4,6 +4,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.vedruna.transporte.CoDrive.dto.AuthResponse;
 import com.vedruna.transporte.CoDrive.dto.LoginRequest;
@@ -13,6 +14,7 @@ import com.vedruna.transporte.CoDrive.persistance.models.Rol;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.repository.UsuarioRepository;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,7 +26,7 @@ public class AuthService {
     private final JwtService jwtService;
 
     // Modificación: Verificar si el usuario ya existe antes de registrarlo
-    public AuthResponse registrar(RegistroRequest request) {
+    public AuthResponse registrar(@Valid @RequestBody RegistroRequest request) {
         // Verificar si el correo ya está registrado
         Usuario usuarioExistente = usuarioRepository.findByEmail(request.getEmail()).orElse(null);
         if (usuarioExistente != null) {
