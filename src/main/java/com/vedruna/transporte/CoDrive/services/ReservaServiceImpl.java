@@ -22,17 +22,6 @@ public class ReservaServiceImpl implements ReservaServiceI {
 
     @Override
     public Reserva crearReserva(Reserva reserva) {
-        Long usuarioId = reserva.getUsuario().getId();
-        Long viajeId = reserva.getViaje().getId();
-
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        Viaje viaje = viajeRepository.findById(viajeId)
-                .orElseThrow(() -> new RuntimeException("Viaje no encontrado"));
-
-        reserva.setUsuario(usuario);
-        reserva.setViaje(viaje);
-
         return reservaRepository.save(reserva);
     }
 
@@ -40,6 +29,13 @@ public class ReservaServiceImpl implements ReservaServiceI {
     public List<Reserva> obtenerReservasPorUsuario(Long usuarioId) {
         return reservaRepository.findByUsuarioId(usuarioId);
     }
+
+    @Override
+    public List<Reserva> obtenerReservasPorConductor(Long conductorId) {
+        List<Viaje> viajesConductor = viajeRepository.findByConductorId(conductorId);
+        return reservaRepository.findByViajeIn(viajesConductor);
+    }
+
 
     @Override
     public List<Reserva> obtenerReservasPorViaje(Long viajeId) {
