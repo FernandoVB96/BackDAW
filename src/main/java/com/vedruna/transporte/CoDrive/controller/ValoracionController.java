@@ -6,6 +6,8 @@ import com.vedruna.transporte.CoDrive.dto.UsuarioDTO;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Valoracion;
 import com.vedruna.transporte.CoDrive.services.ValoracionServiceI;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,7 @@ public class ValoracionController {
     private final ValoracionServiceI valoracionService;
 
     @PostMapping
-    public ResponseEntity<ValoracionResponseDTO> crearValoracion(@RequestBody CrearValoracionDTO dto) {
+    public ResponseEntity<ValoracionResponseDTO> crearValoracion(@Valid @RequestBody CrearValoracionDTO dto) {
         Valoracion valoracionCreada = valoracionService.crearValoracion(dto);
         ValoracionResponseDTO responseDTO = mapToValoracionResponseDTO(valoracionCreada);
         return ResponseEntity.ok(responseDTO);

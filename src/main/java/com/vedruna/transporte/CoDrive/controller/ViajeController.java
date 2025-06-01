@@ -4,6 +4,9 @@ import com.vedruna.transporte.CoDrive.dto.CrearViajeRequest;
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.services.ViajeServiceI;
+
+import jakarta.validation.Valid;
+
 import com.vedruna.transporte.CoDrive.exceptions.NoEsConductorException;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +26,7 @@ public class ViajeController {
 
     // Crear nuevo viaje
     @PostMapping
-    public ResponseEntity<Viaje> crearViaje(@RequestBody CrearViajeRequest request) {
+    public ResponseEntity<Viaje> crearViaje(@Valid @RequestBody CrearViajeRequest request) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (!userDetails.getAuthorities().toString().contains("ROLE_CONDUCTOR")) {
@@ -44,6 +47,7 @@ public class ViajeController {
 
         return ResponseEntity.ok(viajeService.crearViaje(viaje));
     }
+
 
     // Obtener viajes con plazas disponibles
     @GetMapping("/disponibles")

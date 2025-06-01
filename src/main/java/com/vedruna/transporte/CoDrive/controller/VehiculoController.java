@@ -2,6 +2,8 @@ package com.vedruna.transporte.CoDrive.controller;
 
 import com.vedruna.transporte.CoDrive.persistance.models.Vehiculo;
 import com.vedruna.transporte.CoDrive.services.VehiculoServiceI;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,7 @@ public class VehiculoController {
     private final VehiculoServiceI vehiculoService;
 
     @PostMapping
-    public ResponseEntity<Vehiculo> agregarVehiculo(@RequestBody Vehiculo vehiculo) {
+    public ResponseEntity<Vehiculo> agregarVehiculo(@Valid @RequestBody Vehiculo vehiculo) {
         Vehiculo nuevoVehiculo = vehiculoService.agregarVehiculo(vehiculo);
         return ResponseEntity.ok(nuevoVehiculo);
     }
@@ -38,7 +40,7 @@ public class VehiculoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizarVehiculo(@PathVariable Long id, @RequestBody Vehiculo vehiculo) {
+    public ResponseEntity<Void> actualizarVehiculo(@PathVariable Long id, @Valid @RequestBody Vehiculo vehiculo) {
         vehiculoService.actualizarVehiculo(id, vehiculo);
         return ResponseEntity.noContent().build();
     }

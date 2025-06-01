@@ -38,13 +38,9 @@ public class ValoracionServiceImpl implements ValoracionServiceI {
         valoracion.setAutor(autor);
         valoracion.setConductor(conductor);
 
-        if (!valoracion.esValida()) {
-            throw new IllegalArgumentException("La valoración no es válida");
-        }
-
         return valoracionRepository.save(valoracion);
     }
-
+    
     @Override
     public List<Valoracion> obtenerValoracionesPorConductor(Long conductorId) {
         // Lógica para obtener todas las valoraciones de un conductor específico

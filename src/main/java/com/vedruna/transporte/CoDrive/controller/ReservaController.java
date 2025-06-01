@@ -2,6 +2,8 @@ package com.vedruna.transporte.CoDrive.controller;
 
 import com.vedruna.transporte.CoDrive.persistance.models.Reserva;
 import com.vedruna.transporte.CoDrive.services.ReservaServiceI;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +18,13 @@ public class ReservaController {
     private final ReservaServiceI reservaService;
 
     @PostMapping
-    public ResponseEntity<Reserva> crearReserva(@RequestBody Reserva reserva) {
+    public ResponseEntity<Reserva> crearReserva(@Valid @RequestBody Reserva reserva) {
         Reserva creada = reservaService.crearReserva(reserva);
         return ResponseEntity.ok(creada);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Reserva> actualizarReserva(@PathVariable Long id, @RequestBody Reserva reserva) {
+    public ResponseEntity<Reserva> actualizarReserva(@Valid @PathVariable Long id, @RequestBody Reserva reserva) {
         Reserva actualizada = reservaService.actualizarReserva(id, reserva);
         return ResponseEntity.ok(actualizada);
     }
