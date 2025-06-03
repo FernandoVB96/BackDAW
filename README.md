@@ -1,91 +1,141 @@
-# CoDrive - Sistema de Gestión de Viajes Compartidos
+# CoDrive - Sistema de Reservas de Transporte
 
-CoDrive es una aplicación backend construida en **Java con Spring Boot** para la gestión de viajes compartidos. Permite a conductores crear viajes, gestionar vehículos, y a usuarios unirse a viajes, dejar valoraciones y reservar plazas. Está diseñada pensando en un flujo claro, con roles y seguridad básicos.
-
----
-
-## Estructura del Proyecto
-
-### Modelos Principales (`/persistance/models`)
-
-- **Usuario:** Representa a un usuario del sistema, con roles (`ADMIN`, `USUARIO`, `CONDUCTOR`), datos personales y credenciales (password oculto en respuestas).
-- **Rol:** Enum para los tipos de usuario, con métodos útiles para validar permisos.
-- **Vehiculo:** Vehículos asociados a conductores, con datos básicos y plazas disponibles.
-- **Viaje:** Viajes creados por conductores, con origen, destino, fechas, plazas totales y disponibles, además de la lista de pasajeros.
-- **Reserva:** Reserva de plazas en viajes, con estados (`PENDIENTE`, `CONFIRMADA`, `CANCELADA`) y fechas.
-- **Valoracion:** Valoraciones que usuarios hacen a conductores, con puntuación, comentario y fechas.
+CoDrive es una API REST para gestionar reservas de viajes compartidos. Permite registrar usuarios, autenticar con JWT, crear y gestionar reservas, y manejar permisos según roles.
 
 ---
 
-## Endpoints Principales (`/controller`)
+## Tecnologías
 
-### ValoracionController (`/valoraciones`)
-
-- **POST /** Crear una valoración.
-- **GET /conductor/{conductorId}** Listar valoraciones para un conductor.
-- **GET /usuario/{usuarioId}** Listar valoraciones hechas por un usuario.
-- **GET /conductor/{conductorId}/media** Calcular la valoración media de un conductor.
-
-### VehiculoController (`/vehiculos`)
-
-- **POST /** Agregar un vehículo.
-- **GET /{id}** Obtener vehículo por ID.
-- **DELETE /{id}** Eliminar vehículo.
-- **GET /conductor/{conductorId}** Listar vehículos de un conductor.
-- **PUT /{id}** Actualizar vehículo.
-
-### ViajeController (`/viajes`)
-
-- **POST /** Crear un nuevo viaje (solo conductores).
-- **GET /disponibles** Listar viajes con plazas disponibles (filtrado por origen, destino y plazas mínimas).
-- **GET /mis-viajes** Viajes del usuario autenticado.
-- **DELETE /{viajeId}** Cancelar un viaje (solo conductor).
-- **POST /{viajeId}/unirse** Unirse a un viaje.
-- **POST /{viajeId}/abandonar** Abandonar un viaje.
-- **GET /{viajeId}/pasajeros** Listar pasajeros de un viaje.
+- Java 17+
+- Spring Boot
+- Spring Security con JWT
+- JPA/Hibernate
+- Lombok
+- Base de datos relacional (MySQL, PostgreSQL, etc.)
 
 ---
 
-## Tecnologías y Dependencias
+## Endpoints Principales
 
-- Java 17+ (o compatible)
-- Spring Boot (Web, Validation, Security)
-- Lombok (para evitar boilerplate)
-- Jakarta Persistence API (JPA/Hibernate)
-- Validaciones mediante `jakarta.validation.constraints`
-- JSON manejo con Jackson
+### Autenticación y Registro (`/auth`)
+
+- `POST /auth/registro`  
+  Registra un usuario nuevo. Devuelve JWT.  
+  Valida que el email no exista ya.  
+
+- `POST /auth/login`  
+  Login con email y contraseña. Devuelve JWT.
+
+### Gestión de Reservas (`/reservas`)
+
+- `POST /reservas`  
+  Crea una reserva para un viaje y usuario autenticado.
+
+- `PUT /reservas/{id}`  
+  Actualiza una reserva existente.
+
+- `DELETE /reservas/{id}`  
+  Elimina una reserva.
+
+- `GET /reservas/{id}`  
+  Obtiene reserva por ID.
+
+- `GET /reservas/usuario/{usuarioId}`  
+  Obtiene todas las reservas de un usuario.
+
+- `GET /reservas/mis-viajes/reservas`  
+  Obtiene reservas de los viajes donde el usuario es conductor.
+
+- `GET /reservas/viaje/{viajeId}`  
+  Obtiene todas las reservas de un viaje específico.
+
+- `POST /reservas/{id}/confirmar`  
+  Confirma una reserva.
+
+- `POST /reservas/{id}/cancelar`  
+  Cancela una reserva.
 
 ---
 
-## Requisitos y Consideraciones
+## Seguridad y Autenticación
 
-- **Roles:** Solo usuarios con rol `CONDUCTOR` pueden crear viajes.
-- **Validaciones:** Se aplican restricciones en entidades para garantizar datos válidos (fechas futuras, rangos de puntuación, formatos).
-- **Seguridad:** Se asume que Spring Security está configurado para manejar autenticación y roles.
-- **Relaciones:** Uso de `@ManyToOne`, `@ManyToMany`, etc., para relacionar usuarios, viajes y vehículos.
-- **Carga perezosa:** Se usa `FetchType.LAZY` para evitar cargar datos innecesarios.
+### Autenticación con JWT
 
----
+- Los endpoints bajo `/auth/**` son públicos.  
+- El resto requiere token JWT válido en el header `Authorization: Bearer <token>`.  
+- El token contiene el email y rol del usuario.  
+- Se valida con `JwtAuthFilter` en cada petición.
 
-## Cómo arrancar el proyecto
+### Configuración de Spring Security
 
-1. Clonar el repositorio.
-2. Configurar la base de datos en `application.properties` o `application.yml`.
-3. Ejecutar la aplicación con `mvn spring-boot:run` o desde tu IDE favorito.
-4. Probar los endpoints con Postman o similar.
+- Seguridad stateless, no hay sesión en servidor.  
+- CSRF deshabilitado porque usamos JWT.  
+- CORS configurado para aceptar peticiones desde cualquier origen.  
+- Contraseñas guardadas con BCrypt.
 
----
+### Servicio de Usuarios para Seguridad
 
-## Ideas para Mejorar
-
-- Implementar lógica en servicios para gestión de plazas y reservas (evitar sobreventa).
-- Añadir control de excepciones personalizadas para errores comunes.
-- Incorporar tests unitarios e integración.
-- Mejorar seguridad con JWT y cifrado de passwords.
-- Optimizar consultas para evitar N+1 problem.
+- `UserDetailsServiceImpl` carga usuario por email.  
+- Traduce rol de la base de datos a `ROLE_<ROL>`, para que Spring Security entienda.
 
 ---
 
-## Contacto
+## Manejo de Errores Global
 
-Si necesitas ayuda o quieres aportar, me encuentras bajo el alias **Kazurro**.
+- Excepciones personalizadas como `EmailAlreadyExistsException` devuelven errores claros y códigos HTTP adecuados.  
+- Credenciales inválidas responden con 401.  
+- Usuarios no encontrados con 404.  
+- Errores no controlados retornan 500 con mensaje genérico.
+
+---
+
+## Ejemplo de Uso
+
+1. Registro:
+
+```bash
+POST /auth/registro
+Content-Type: application/json
+
+{
+  "nombre": "Usuario",
+  "email": "usuario@example.com",
+  "password": "secreto123"
+}
+```
+
+2. Login:
+
+```bash
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@example.com",
+  "password": "secreto123"
+}
+```
+
+Respuesta: 
+```bash
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+### Servicio de Usuarios para Seguridad
+1. Configura tu base de datos y cambia las propiedades en application.properties:ç
+
+```bash
+spring.datasource.url=jdbc:mysql://localhost:3306/codrive
+spring.datasource.username=root
+spring.datasource.password=tu_password
+jwt.secret=TuClaveSuperSecretaBase64==
+```
+
+2. Ejecuta la aplicación:
+
+```bash
+./mvnw spring-boot:run
+```
+
+
