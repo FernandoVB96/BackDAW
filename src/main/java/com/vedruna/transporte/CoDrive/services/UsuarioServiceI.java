@@ -14,4 +14,5 @@ public interface UsuarioServiceI {
     List<Usuario> obtenerTodos();
     Optional<Usuario> buscarPorEmail(String email);
     List<Usuario> obtenerUsuariosPorRol(Rol rol);
+    void guardarUsuario(Usuario usuario);
 }

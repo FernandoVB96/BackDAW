@@ -1,6 +1,7 @@
 package com.vedruna.transporte.CoDrive.controller;
 
 import com.vedruna.transporte.CoDrive.dto.CrearViajeRequest;
+import com.vedruna.transporte.CoDrive.dto.ViajeConRolDTO;
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.services.ViajeServiceI;
@@ -61,7 +62,7 @@ public class ViajeController {
 
     // Obtener los viajes del usuario logueado
     @GetMapping("/mis-viajes")
-    public ResponseEntity<List<Viaje>> verMisViajes() {
+    public ResponseEntity<List<ViajeConRolDTO>> verMisViajes() {
         return ResponseEntity.ok(viajeService.buscarMisViajes());
     }
 

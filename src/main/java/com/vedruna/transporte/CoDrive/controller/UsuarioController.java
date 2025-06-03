@@ -15,8 +15,12 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Map;
@@ -115,4 +119,24 @@ public class UsuarioController {
     public ResponseEntity<Double> calcularValoracionMedia(@PathVariable Long usuarioId) {
         return ResponseEntity.ok(conductorService.calcularValoracionMedia(usuarioId));
     }
+
+        @PostMapping("/token")
+        public ResponseEntity<?> guardarTokenPush(@RequestBody Map<String, String> body) {
+            String expoPushToken = body.get("expoPushToken");
+            if (expoPushToken == null || expoPushToken.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Token de notificaciones es requerido"));
+            }
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String email = authentication.getName();
+
+            Usuario usuario = usuarioService.buscarPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            usuario.setExpoPushToken(expoPushToken);
+            usuarioService.guardarUsuario(usuario);
+
+            return ResponseEntity.ok().build();
+        }
 }
+

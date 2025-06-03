@@ -1,6 +1,7 @@
 package com.vedruna.transporte.CoDrive.services;
 
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
+import com.vedruna.transporte.CoDrive.dto.ViajeConRolDTO;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.repository.UsuarioRepository;
 import com.vedruna.transporte.CoDrive.persistance.repository.ViajeRepository;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -53,12 +55,26 @@ public class ViajeServiceImpl implements ViajeServiceI {
     }
 
     @Override
-    public List<Viaje> buscarMisViajes() {
+    public List<ViajeConRolDTO> buscarMisViajes() {
         Usuario usuarioLogueado = obtenerUsuarioLogueado();
+
         List<Viaje> viajesConductor = viajeRepository.findByConductor(usuarioLogueado);
         List<Viaje> viajesPasajero = viajeRepository.findByPasajeros(usuarioLogueado);
-        viajesConductor.addAll(viajesPasajero);
-        return viajesConductor;
+
+        List<ViajeConRolDTO> resultado = new ArrayList<>();
+
+        for (Viaje viaje : viajesConductor) {
+            resultado.add(new ViajeConRolDTO(viaje, "CONDUCTOR"));
+        }
+
+        for (Viaje viaje : viajesPasajero) {
+            // Evita duplicados si el usuario es conductor y pasajero (raro pero posible)
+            if (viajesConductor.stream().noneMatch(v -> v.getId().equals(viaje.getId()))) {
+                resultado.add(new ViajeConRolDTO(viaje, "PASAJERO"));
+            }
+        }
+
+        return resultado;
     }
 
     @Override

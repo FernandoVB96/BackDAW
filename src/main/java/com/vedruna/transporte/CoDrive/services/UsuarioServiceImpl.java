@@ -73,4 +73,9 @@ public class UsuarioServiceImpl implements UsuarioServiceI {
     private String getEmailUsuarioLogueado() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
+
+    @Override
+    public void guardarUsuario(Usuario usuario) {
+        usuarioRepository.save(usuario);
+    }
 }
