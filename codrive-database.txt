@@ -7,7 +7,7 @@ USE codrive;
 
 -- ------------------------------------------------------
 -- Table structure for table `reserva`
---
+-- 
 
 DROP TABLE IF EXISTS `reserva`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -28,7 +28,7 @@ CREATE TABLE `reserva` (
 
 -- ------------------------------------------------------
 -- Table structure for table `usuario`
---
+-- 
 
 DROP TABLE IF EXISTS `usuario`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -40,6 +40,7 @@ CREATE TABLE `usuario` (
   `telefono` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `rol` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expoPushToken` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -47,7 +48,7 @@ CREATE TABLE `usuario` (
 
 -- ------------------------------------------------------
 -- Table structure for table `valoracion`
---
+-- 
 
 DROP TABLE IF EXISTS `valoracion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -70,7 +71,7 @@ CREATE TABLE `valoracion` (
 
 -- ------------------------------------------------------
 -- Table structure for table `vehiculo`
---
+-- 
 
 DROP TABLE IF EXISTS `vehiculo`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -90,7 +91,7 @@ CREATE TABLE `vehiculo` (
 
 -- ------------------------------------------------------
 -- Table structure for table `viaje`
---
+-- 
 
 DROP TABLE IF EXISTS `viaje`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -112,7 +113,7 @@ CREATE TABLE `viaje` (
 
 -- ------------------------------------------------------
 -- Table structure for table `viaje_pasajeros`
---
+-- 
 
 DROP TABLE IF EXISTS `viaje_pasajeros`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
