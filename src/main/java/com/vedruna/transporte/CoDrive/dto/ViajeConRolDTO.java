@@ -13,6 +13,7 @@ public class ViajeConRolDTO {
     private String origen;
     private String destino;
     private LocalDateTime fechaHoraSalida;
+    private LocalDateTime fechaHoraLlegada;
     private int plazasDisponibles;
     private Long conductor_id;
     private String rolUsuario;
@@ -22,6 +23,7 @@ public class ViajeConRolDTO {
         this.origen = viaje.getOrigen();
         this.destino = viaje.getDestino();
         this.fechaHoraSalida = viaje.getFechaHoraSalida();
+        this.fechaHoraLlegada = viaje.getFechaHoraLlegada();
         this.plazasDisponibles = viaje.getPlazasDisponibles();
         this.conductor_id = viaje.getConductor().getId();
         this.rolUsuario = rolUsuario;
