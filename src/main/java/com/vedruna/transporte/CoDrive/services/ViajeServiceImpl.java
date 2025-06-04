@@ -2,7 +2,9 @@ package com.vedruna.transporte.CoDrive.services;
 
 import com.vedruna.transporte.CoDrive.persistance.models.Viaje;
 import com.vedruna.transporte.CoDrive.dto.ViajeConRolDTO;
+import com.vedruna.transporte.CoDrive.persistance.models.Reserva;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
+import com.vedruna.transporte.CoDrive.persistance.repository.ReservaRepository;
 import com.vedruna.transporte.CoDrive.persistance.repository.UsuarioRepository;
 import com.vedruna.transporte.CoDrive.persistance.repository.ViajeRepository;
 
@@ -21,6 +23,7 @@ public class ViajeServiceImpl implements ViajeServiceI {
 
     private final ViajeRepository viajeRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ReservaRepository reservaRepository;
 
     @Override
     public Viaje crearViaje(Viaje viaje) {
@@ -85,18 +88,14 @@ public class ViajeServiceImpl implements ViajeServiceI {
     }
 
     @Override
+    @Transactional
     public void cancelarViaje(Long viajeId) {
-        Usuario conductor = obtenerUsuarioLogueado();
-        Viaje viaje = viajeRepository.findById(viajeId)
-                .orElseThrow(() -> new IllegalArgumentException("Viaje no encontrado"));
+        // 1. Borrar las reservas asociadas al viaje
+        reservaRepository.deleteByViajeId(viajeId);
 
-        if (!viaje.getConductor().getId().equals(conductor.getId())) {
-            throw new SecurityException("No tienes permiso para cancelar este viaje");
-        }
-
-        viajeRepository.delete(viaje);
+        // 2. Borrar el viaje
+        viajeRepository.deleteById(viajeId);
     }
-
     @Override
     public Viaje unirseAViaje(Long viajeId) {
         Usuario usuario = obtenerUsuarioLogueado();

@@ -66,6 +66,16 @@ public class ViajeController {
         return ResponseEntity.ok(viajeService.buscarMisViajes());
     }
 
+    @GetMapping("/{viajeId}")
+    public ResponseEntity<Viaje> obtenerDetalleViaje(@PathVariable Long viajeId) {
+        try {
+            Viaje viaje = viajeService.obtenerViajePorId(viajeId);
+            return ResponseEntity.ok(viaje);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     // 🚫 Cancelar un viaje (solo conductor)
     @DeleteMapping("/{viajeId}")
     public ResponseEntity<Void> cancelarViaje(@PathVariable Long viajeId) {

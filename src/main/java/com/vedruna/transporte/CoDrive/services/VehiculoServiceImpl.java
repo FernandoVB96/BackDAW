@@ -1,7 +1,10 @@
 package com.vedruna.transporte.CoDrive.services;
 
+import com.vedruna.transporte.CoDrive.dto.VehiculoCreateDTO;
+import com.vedruna.transporte.CoDrive.dto.VehiculoDTO;
 import com.vedruna.transporte.CoDrive.persistance.models.Usuario;
 import com.vedruna.transporte.CoDrive.persistance.models.Vehiculo;
+import com.vedruna.transporte.CoDrive.persistance.repository.UsuarioRepository;
 import com.vedruna.transporte.CoDrive.persistance.repository.VehiculoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +16,20 @@ import java.util.List;
 public class VehiculoServiceImpl implements VehiculoServiceI {
 
     private final VehiculoRepository vehiculoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Override
-    public Vehiculo agregarVehiculo(Vehiculo vehiculo) {
+    public Vehiculo agregarVehiculo(VehiculoCreateDTO dto) {
+        Usuario conductor = usuarioRepository.findById(dto.getConductorId())
+            .orElseThrow(() -> new RuntimeException("Conductor no encontrado"));
+
+        Vehiculo vehiculo = new Vehiculo();
+        vehiculo.setMarca(dto.getMarca());
+        vehiculo.setModelo(dto.getModelo());
+        vehiculo.setMatricula(dto.getMatricula());
+        vehiculo.setPlazasDisponibles(dto.getPlazasDisponibles());
+        vehiculo.setConductor(conductor);
+
         return vehiculoRepository.save(vehiculo);
     }
 
@@ -35,9 +49,12 @@ public class VehiculoServiceImpl implements VehiculoServiceI {
     }
 
     @Override
-    public void actualizarVehiculo(Long id, Vehiculo vehiculo) {
+    public void actualizarVehiculo(Long id, VehiculoDTO vehiculoDTO) {
         Vehiculo vehiculoExistente = obtenerVehiculo(id);
-        vehiculoExistente.actualizarInfo(vehiculo.getMarca(), vehiculo.getModelo(), vehiculo.getMatricula(), vehiculo.getPlazasDisponibles());
+        vehiculoExistente.setMarca(vehiculoDTO.getMarca());
+        vehiculoExistente.setModelo(vehiculoDTO.getModelo());
+        vehiculoExistente.setMatricula(vehiculoDTO.getMatricula());
+        vehiculoExistente.setPlazasDisponibles(vehiculoDTO.getPlazasDisponibles());
         vehiculoRepository.save(vehiculoExistente);
     }
 }

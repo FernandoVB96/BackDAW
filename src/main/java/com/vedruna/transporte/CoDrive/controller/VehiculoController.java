@@ -1,5 +1,7 @@
 package com.vedruna.transporte.CoDrive.controller;
 
+import com.vedruna.transporte.CoDrive.dto.VehiculoCreateDTO;
+import com.vedruna.transporte.CoDrive.dto.VehiculoDTO;
 import com.vedruna.transporte.CoDrive.persistance.models.Vehiculo;
 import com.vedruna.transporte.CoDrive.services.VehiculoServiceI;
 
@@ -18,8 +20,8 @@ public class VehiculoController {
     private final VehiculoServiceI vehiculoService;
 
     @PostMapping
-    public ResponseEntity<Vehiculo> agregarVehiculo(@Valid @RequestBody Vehiculo vehiculo) {
-        Vehiculo nuevoVehiculo = vehiculoService.agregarVehiculo(vehiculo);
+    public ResponseEntity<Vehiculo> agregarVehiculo(@Valid @RequestBody VehiculoCreateDTO vehiculoDTO) {
+        Vehiculo nuevoVehiculo = vehiculoService.agregarVehiculo(vehiculoDTO);
         return ResponseEntity.ok(nuevoVehiculo);
     }
 
@@ -40,8 +42,8 @@ public class VehiculoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> actualizarVehiculo(@PathVariable Long id, @Valid @RequestBody Vehiculo vehiculo) {
-        vehiculoService.actualizarVehiculo(id, vehiculo);
+    public ResponseEntity<Void> actualizarVehiculo(@PathVariable Long id, @Valid @RequestBody VehiculoDTO vehiculoDTO) {
+        vehiculoService.actualizarVehiculo(id, vehiculoDTO);
         return ResponseEntity.noContent().build();
     }
 }
