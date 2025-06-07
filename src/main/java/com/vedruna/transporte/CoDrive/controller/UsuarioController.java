@@ -119,23 +119,26 @@ public class UsuarioController {
         return ResponseEntity.ok(conductorService.calcularValoracionMedia(usuarioId));
     }
 
-        @PostMapping("/token")
-        public ResponseEntity<?> guardarTokenPush(@RequestBody Map<String, String> body) {
-            String expoPushToken = body.get("expoPushToken");
-            if (expoPushToken == null || expoPushToken.isEmpty()) {
-                return ResponseEntity.badRequest().body(Map.of("error", "Token de notificaciones es requerido"));
-            }
-
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-
-            Usuario usuario = usuarioService.buscarPorEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-            usuario.setExpoPushToken(expoPushToken);
-            usuarioService.guardarUsuario(usuario);
-
-            return ResponseEntity.ok().build();
+// 🔕 Endpoint desactivado temporalmente: guardar token push
+    /*
+    @PostMapping("/token")
+    public ResponseEntity<?> guardarTokenPush(@RequestBody Map<String, String> body) {
+        String expoPushToken = body.get("expoPushToken");
+        if (expoPushToken == null || expoPushToken.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Token de notificaciones es requerido"));
         }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        Usuario usuario = usuarioService.buscarPorEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        usuario.setExpoPushToken(expoPushToken);
+        usuarioService.guardarUsuario(usuario);
+
+        return ResponseEntity.ok().build();
+    }
+    */
 }
 
