@@ -1,9 +1,9 @@
 -- Crear la base de datos y seleccionarla
-CREATE DATABASE IF NOT EXISTS codrive
+CREATE DATABASE IF NOT EXISTS defautldb
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE codrive;
+USE defaultdb;
 
 -- ------------------------------------------------------
 -- Table structure for table `reserva`
