@@ -1,4 +1,3 @@
-
 # CoDrive - Sistema de Reservas de Transporte Compartido
 
 **Ciclo:** Desarrollo de Aplicaciones Web (DAW)  
@@ -127,6 +126,32 @@ POST /vehiculos
 PUT /vehiculos/:id
 DELETE /vehiculos/:id
 ```
+
+---
+
+## Documentación de la API
+
+### Tabla de Rutas
+
+| Endpoint                             | Método | Requiere Token | Rol             |
+|-------------------------------------|--------|----------------|------------------|
+| /auth/registro                      | POST   | No             | -                |
+| /auth/login                         | POST   | No             | -                |
+| /viajes                             | POST   | Sí             | CONDUCTOR        |
+| /viajes/disponibles                 | GET    | Sí             | USUARIO          |
+| /viajes/:id                         | GET    | Sí             | Todos            |
+| /reservas                           | POST   | Sí             | USUARIO          |
+| /reservas/:id/confirmar             | POST   | Sí             | CONDUCTOR        |
+| /reservas/:id/cancelar              | POST   | Sí             | USUARIO          |
+| /usuarios/mi-perfil                 | GET    | Sí             | Todos            |
+| /usuarios/actualizar                | PUT    | Sí             | Todos            |
+| /vehiculos                          | POST   | Sí             | CONDUCTOR        |
+| /vehiculos/:id                      | PUT    | Sí             | CONDUCTOR        |
+| /vehiculos/:id                      | DELETE | Sí             | CONDUCTOR        |
+| /usuarios/:id/vehiculos             | POST   | Sí             | CONDUCTOR        |
+
+> ⚠️ Todos los endpoints protegidos requieren el token JWT:  
+> `Authorization: Bearer <token>`
 
 ---
 
