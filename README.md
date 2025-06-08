@@ -1,141 +1,155 @@
-# CoDrive - Sistema de Reservas de Transporte
 
-CoDrive es una API REST para gestionar reservas de viajes compartidos. Permite registrar usuarios, autenticar con JWT, crear y gestionar reservas, y manejar permisos según roles.
+# CoDrive - Sistema de Reservas de Transporte Compartido
 
----
-
-## Tecnologías
-
-- Java 17+
-- Spring Boot
-- Spring Security con JWT
-- JPA/Hibernate
-- Lombok
-- Base de datos relacional (MySQL, PostgreSQL, etc.)
+**Ciclo:** Desarrollo de Aplicaciones Web (DAW)  
+**Autor:** Fernando Vaquero Buzon
 
 ---
 
-## Endpoints Principales
+## Índice
 
-### Autenticación y Registro (`/auth`)
-
-- `POST /auth/registro`  
-  Registra un usuario nuevo. Devuelve JWT.  
-  Valida que el email no exista ya.  
-
-- `POST /auth/login`  
-  Login con email y contraseña. Devuelve JWT.
-
-### Gestión de Reservas (`/reservas`)
-
-- `POST /reservas`  
-  Crea una reserva para un viaje y usuario autenticado.
-
-- `PUT /reservas/{id}`  
-  Actualiza una reserva existente.
-
-- `DELETE /reservas/{id}`  
-  Elimina una reserva.
-
-- `GET /reservas/{id}`  
-  Obtiene reserva por ID.
-
-- `GET /reservas/usuario/{usuarioId}`  
-  Obtiene todas las reservas de un usuario.
-
-- `GET /reservas/mis-viajes/reservas`  
-  Obtiene reservas de los viajes donde el usuario es conductor.
-
-- `GET /reservas/viaje/{viajeId}`  
-  Obtiene todas las reservas de un viaje específico.
-
-- `POST /reservas/{id}/confirmar`  
-  Confirma una reserva.
-
-- `POST /reservas/{id}/cancelar`  
-  Cancela una reserva.
+- [Introducción](#introducción)
+- [Funcionalidades](#funcionalidades)
+- [Tecnologías utilizadas](#tecnologías-utilizadas)
+- [Guía de instalación](#guía-de-instalación)
+- [Guía de uso](#guía-de-uso)
+- [Documentación de la API](#documentación-de-la-api)
+- [Conclusión](#conclusión)
+- [Contribuciones y agradecimientos](#contribuciones-y-agradecimientos)
+- [Licencia](#licencia)
+- [Contacto](#contacto)
 
 ---
 
-## Seguridad y Autenticación
+## Introducción
 
-### Autenticación con JWT
+CoDrive es una API REST y aplicación móvil para la gestión de viajes compartidos.  
+Permite a usuarios registrarse, autenticarse, crear viajes, reservar plazas y gestionar sus vehículos.
 
-- Los endpoints bajo `/auth/**` son públicos.  
-- El resto requiere token JWT válido en el header `Authorization: Bearer <token>`.  
-- El token contiene el email y rol del usuario.  
-- Se valida con `JwtAuthFilter` en cada petición.
+### Justificación y Motivación
 
-### Configuración de Spring Security
+Reducir el impacto medioambiental y económico del transporte promoviendo el uso compartido de vehículos.
 
-- Seguridad stateless, no hay sesión en servidor.  
-- CSRF deshabilitado porque usamos JWT.  
-- CORS configurado para aceptar peticiones desde cualquier origen.  
-- Contraseñas guardadas con BCrypt.
+### Objetivos
 
-### Servicio de Usuarios para Seguridad
-
-- `UserDetailsServiceImpl` carga usuario por email.  
-- Traduce rol de la base de datos a `ROLE_<ROL>`, para que Spring Security entienda.
+- Permitir publicación de viajes.
+- Facilitar la reserva y confirmación/cancelación.
+- Gestionar roles: usuario y conductor.
 
 ---
 
-## Manejo de Errores Global
+## Funcionalidades
 
-- Excepciones personalizadas como `EmailAlreadyExistsException` devuelven errores claros y códigos HTTP adecuados.  
-- Credenciales inválidas responden con 401.  
-- Usuarios no encontrados con 404.  
-- Errores no controlados retornan 500 con mensaje genérico.
+- Registro y autenticación con JWT.
+- Creación y búsqueda de viajes.
+- Reserva, confirmación y cancelación de plazas.
+- Gestión de vehículos por parte de conductores.
+- Panel de perfil del usuario.
 
 ---
 
-## Ejemplo de Uso
+## Tecnologías utilizadas
 
-1. Registro:
+- **Backend:** Java 17+, Spring Boot, JPA, Spring Security, JWT, MySQL.
+- **Frontend:** React Native con TypeScript.
+- **Otros:** Axios, Fetch API, Context API.
 
-```bash
-POST /auth/registro
-Content-Type: application/json
+---
 
-{
-  "nombre": "Usuario",
-  "email": "usuario@example.com",
-  "password": "secreto123"
-}
-```
+## Guía de instalación
 
-2. Login:
+1. Configura `application.properties`:
 
-```bash
-POST /auth/login
-Content-Type: application/json
-
-{
-  "email": "usuario@example.com",
-  "password": "secreto123"
-}
-```
-
-Respuesta: 
-```bash
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-}
-```
-### Servicio de Usuarios para Seguridad
-1. Configura tu base de datos y cambia las propiedades en application.properties:ç
-
-```bash
+```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/codrive
 spring.datasource.username=root
 spring.datasource.password=tu_password
 jwt.secret=TuClaveSuperSecretaBase64==
 ```
 
-2. Ejecuta la aplicación:
+2. Ejecuta la app:
 
 ```bash
 ./mvnw spring-boot:run
 ```
 
+---
 
+## Guía de uso
+
+### Registro y Login
+
+```bash
+POST /auth/registro
+POST /auth/login
+```
+
+### Crear un viaje (desde app)
+
+```ts
+fetch("https://codrive-9fbg.onrender.com/viajes", {
+  method: "POST",
+  headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+  body: JSON.stringify({ origen, destino, fechaHoraSalida, fechaHoraLlegada, plazasTotales }),
+});
+```
+
+### Buscar viajes
+
+```ts
+GET /viajes/disponibles?origen=...&destino=...
+```
+
+### Crear reserva
+
+```ts
+POST /reservas
+```
+
+### Confirmar/Cancelar reserva
+
+```ts
+POST /reservas/:id/confirmar
+POST /reservas/:id/cancelar
+```
+
+### Consultar perfil y vehículos
+
+```ts
+GET /usuarios/mi-perfil
+GET /vehiculos/conductor/:id
+```
+
+### Crear / Editar / Eliminar vehículo
+
+```ts
+POST /vehiculos
+PUT /vehiculos/:id
+DELETE /vehiculos/:id
+```
+
+---
+
+## Conclusión
+
+CoDrive demuestra cómo aplicar Spring Security, JWT y arquitectura RESTful para una app moderna.
+
+---
+
+## Contribuciones y agradecimientos
+
+- Agradecimientos al profesorado.
+- Colaboraciones abiertas vía pull requests.
+
+---
+
+## Licencia
+
+MIT License.
+
+---
+
+## Contacto
+
+Fernando Vaquero Buzon - fernandovaquero96@gmail.com  
+GitHub: [FernandoVB96](https://github.com/FernandoVB96)
